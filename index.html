@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vue Meta Example</title>
+    <!-- Vue.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+    <!-- Vue Meta CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/vue-meta/dist/vue-meta.min.js"></script>
+    <style>
+        body { font-family: sans-serif; margin: 20px; }
+        nav button { margin-right: 10px; padding: 8px 15px; cursor: pointer; }
+        hr { margin: 20px 0; }
+        .page-content { border: 1px solid #eee; padding: 15px; border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <h1>Vue.js vue-meta Example</h1>
+        <p>Observe the browser tab title and inspect the <code>&lt;head&gt;</code> section for metadata changes.</p>
+        <p>Current Document Title: <strong>{{ currentDocumentTitle }}</strong></p>
+
+        <nav>
+            <button @click="currentView = 'home'">Home Page</button>
+            <button @click="currentView = 'about'">About Page</button>
+            <button @click="currentView = 'contact'">Contact Page</button>
+        </nav>
+
+        <hr>
+
+        <div class="page-content">
+            <div v-if="currentView === 'home'">
+                <home-page></home-page>
+            </div>
+            <div v-else-if="currentView === 'about'">
+                <about-page></about-page>
+            </div>
+            <div v-else-if="currentView === 'contact'">
+                <contact-page></contact-page>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 1. Install vue-meta plugin globally
+        Vue.use(VueMeta);
+
+        // Define global meta info for the entire application.
+        // This will be merged with component-specific metaInfo.
+        const globalMetaInfo = {
+            titleTemplate: '%s | My Vue App', // Template for all page titles
+            htmlAttrs: {
+                lang: 'en' // Sets the lang attribute on the <html> tag
+            },
+            meta: [
+                { charset: 'utf-8' },
+                { name: 'viewport', content: 'width=device-width, initial-scale=1' },
+                { name: 'description', content: 'A simple Vue.js application demonstrating vue-meta for dynamic metadata management.' },
+                { property: 'og:type', content: 'website' } // Open Graph type for social media
+            ]
+        };
+
+        // 2. Define Vue components with their own metaInfo
+        const HomePage = {
+            template: `
+                <div>
+                    <h2>Welcome to the Home Page!</h2>
+                    <p>This is the main page of our application. Click buttons above to change pages and observe metadata updates.</p>
+                </div>
+            `,
+            // vue-meta: Define page-specific metadata for the Home page
+            metaInfo: {
+                title: 'Home', // This will become "Home | My Vue App" due to titleTemplate
+                meta: [
+                    { name: 'description', content: 'Explore the home page of our amazing Vue.js application.' },
+                    { property: 'og:title', content: 'Home Page - My Vue App' }
+                ]
+            }
+        };
+
+        const AboutPage = {
+            template: `
+                <div>
+                    <h2>About Us</h2>
+                    <p>Learn more about our company and mission.</p>
+                </div>
+            `,
+            // vue-meta: Define page-specific metadata for the About page
+            metaInfo: {
+                title: 'About', // This will become "About | My Vue App"
+                meta: [
+                    { name: 'description', content: 'Find out more about us and what we do.' },
+                    { property: 'og:title', content: 'About Us - My Vue App' }
+                ]
+            }
+        };
+
+        const ContactPage = {
+            template: `
+                <div>
+                    <h2>Contact Us</h2>
+                    <p>Get in touch with us!</p>
+                </div>
+            `,
+            // vue-meta: Define page-specific metadata for the Contact page
+            metaInfo: {
+                title: 'Contact', // This will become "Contact | My Vue App"
+                meta: [
+                    { name: 'description', content: 'Contact us for any inquiries or support.' },
+                    { property: 'og:title', content: 'Contact Us - My Vue App' }
+                ]
+            }
+        };
+
+        // 3. Create the Vue app instance
+        new Vue({
+            el: '#app',
+            // vue-meta: Pass global meta info to the root instance
+            metaInfo: globalMetaInfo,
+            data: {
+                currentView: 'home' // Default view
+            },
+            components: {
+                HomePage,
+                AboutPage,
+                ContactPage
+            },
+            computed: {
+                currentDocumentTitle() {
+                    return document.title; // Display the actual document title for verification
+                }
+            }
+        });
+    </script>
+</body>
+</html>
